@@ -4,6 +4,36 @@ A repository containing a collection of solutions to the
 [2025 Advent of Code](https://adventofcode.com/2025), created by multiple
 [contributors](#contributors).
 
+```text
+                            .-(_)
+                           / _/
+                        .-'   \
+                       /       '.
+                     ,-~--~-~-~-~-,
+                    {__.._...__..._}             ,888,
+    ,888,          /\##"  6  6  "##/\          ,88' `88,
+  ,88' '88,__     |(\`    (__)    `/)|     __,88'     `88
+ ,88'   .8(_ \_____\_    '----'    _/_____/ _)8.       8'
+ 88    (___)\ \      '-.__    __.-'      / /(___)
+ 88    (___)88 |          '--'          | 88(___)
+ 8'      (__)88,___/                \___,88(__)
+           __`88,_/__________________\_,88`__
+          /    `88,       |88|       ,88'    \
+         /        `88,    |88|    ,88'        \
+        /____________`88,_\88/_,88`____________\
+       /88888888888888888;8888;88888888888888888\
+      /^^^^^^^^^^^^^^^^^^`/88\\^^^^^^^^^^^^^^^^^^\
+jgs  /                    |88| \============,     \
+    /_  __  __  __   _ __ |88|_|^  MERRY    | _ ___\
+    |;:.                  |88| | CHRISTMAS! |      |
+    |;;:.                 |88| '============'      |
+    |;;:.                 |88|                     |
+    |::.                  |88|                     |
+    |;;:'                 |88|                     |
+    |:;,                  |88|                     |
+    '---------------------""""---------------------'
+```
+
 This repo is designed to track [contributor's](#contributors) progress on a
 [private leaderboard](https://adventofcode.com/2025/leaderboard/private), and as
 such won't accept public contribution. If you'd like participate in the
