@@ -50,6 +50,8 @@ Here you can get links to the `README`s within everyone's directory.
 
 - [Nat](./nat/README.md)
 - [Alec](./Alec/README.md)
+- [Kitty](./kitty/README.md)
+- [Dom](./dom/README.md)
 
 ## License
 
