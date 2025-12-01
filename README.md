@@ -85,6 +85,7 @@ Here you can get links to the `README`s within everyone's directory.
 - [Kitty](./kitty/README.md)
 - [Nat](./nat/README.md)
 - [Chris](./chris/README.md)
+- [Nika](./nika/README.md)
 
 ## License
 
