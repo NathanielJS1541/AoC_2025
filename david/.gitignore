@@ -1,0 +1,4 @@
+# Ignores for Rust
+**/*.lock
+**/target
+
