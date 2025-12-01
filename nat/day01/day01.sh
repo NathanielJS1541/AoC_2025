@@ -26,7 +26,7 @@ EOF
 # results for part 1 and 2 to an array passed in by name.
 #
 # The solutions array passed by name will be updated to contain two elements:
-# - [0]: The solution to part 1.
+# - [0]: The number of times the dial lands on 0.
 # - [1]: The solution to part 2.
 #
 # Arguments:
@@ -36,12 +36,70 @@ EOF
 # Usage:
 #   solve_day01 <input_array_name> <solutions_array_name>
 solve_day01() {
+    # Declare a nameref variable to the input array variable to access the input
+    # data.
+    local -n input=$1
+
     # Declare a nameref variable to the array to pass the results back to the
     # caller.
     local -n results=$2
 
-    # Dummy solutions to test script structure.
-    results=("TODO" "TODO")
+    # Local variable to count the number of times the dial lands on 0.
+    local zero_landings=0
+
+    # The dial starts pointing at position 50.
+    local dial_position=50
+
+    # Loop through each rotation in the input data and process it.
+    local rotation direction distance
+    for rotation in "${input[@]}"; do
+        # Parse each input line into direction and distance components.
+        #
+        # Each line should be in the format "L<distance>" or "R<distance>".
+        if [[ "$rotation" =~ ^([LR])([0-9]+)$ ]]; then
+            direction=${BASH_REMATCH[1]}
+            distance=${BASH_REMATCH[2]}
+
+            # Update the dial position based on the direction and distance.
+            # Right moves the dial in the positive direction, left moves the
+            # dial in the negative direction.
+            case "$direction" in
+                R) dial_position=$(( dial_position + distance ));;
+                L) dial_position=$(( dial_position - distance ));;
+                *)
+                    # If the direction is not recognised, print an error message
+                    # and exit with an error code.
+                    echo "Error: '$direction' isn't a recognised direction." >&2
+                    exit $ERR_INPUT;;
+            esac
+
+            # Cancel out all full rotations from the dial_position. This value
+            # is now constrained between -99 an 99.
+            dial_position=$(( dial_position % 100 ))
+
+            # If the constrained value is negative, it should wrap back around
+            # past 100. Add 100 if it is negative to achieve this.
+            if [[ "$dial_position" -lt 0 ]]; then
+                dial_position=$(( dial_position + 100 ))
+            fi
+
+            # If a dial position of 0 was reached at the end of a movement,
+            # increment the zero_landings counter.
+            if [[ "$dial_position" -eq 0 ]]; then
+                ((zero_landings++))
+            fi
+        else
+            # If the rotation format is invalid, print an error message and
+            # exit with an error code.
+            echo "Error: Invalid rotation format '$rotation'." >&2
+            exit $ERR_INPUT
+        fi
+    done
+
+    # Write the solutions to the results nameref array:
+    # - Part 1: number of times the dial landed on 0.
+    # - Part 2: dummy value...
+    results=("$zero_landings" "TODO")
 }
 
 # Main function to parse arguments and execute the script logic.
@@ -96,19 +154,12 @@ main() {
         exit $ERR_FILE
     fi
 
-    # TODO: Open the file at $input?
-    # I don't yet know the structure of the data or how I want to process it,
-    # so I'm leaving this part as a placeholder for now.
-    #
-    # Perhaps the processing methods will need to do this themselves if they
-    # require different structures.
-    #mapfile -t input_data < "$input"
-    # or
-    #input_data=$(< "$input")
-    # TODO: Dummy placeholder for input processing.
+    # Open the input file and read its contents to an array.
     local input_data
-
-    # TODO: Use $ERR_INPUT return code for input processing errors.
+    mapfile -t input_data < "$input" || {
+        echo "Error: Failed to parse input file $input." >&2
+        exit $ERR_INPUT
+    }
 
     # Declare an array to hold the solutions for each part of the challenge.
     declare -a solutions
