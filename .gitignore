@@ -507,3 +507,4 @@ fabric.properties
 *.dat
 *.tsv
 *.txt
+input
