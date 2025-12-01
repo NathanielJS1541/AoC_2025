@@ -8,7 +8,8 @@ data to be passed in as a text file using command line arguments. See
 ## Usage
 
 This script requires:
- - `bash` to be installed on the system.
+ - `bash 4.3+` to be installed on the system. This script uses variables with
+   the `nameref` attribute, which were introduced in `bash 4.3`.
  - Your challenge input to be downloaded locally.
  - The script to be executable.
 
