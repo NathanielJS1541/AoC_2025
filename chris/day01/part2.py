@@ -7,19 +7,18 @@ input = open("input.txt").readlines()
 input = [-int(i[1:]) if i[0] == 'L' else int(i[1:]) for i in input]
 
 d = 50 #Dial value.
-ld = None #Last dial value.
+ld = 50 #Last dial value.
 numZeroes = 0 #Puzzle answer.
 
 for i in input:
     d += i
     
-    if ld != None:
-        dir = -1 if i < 0 else 1 #Sign of input value.
-        #Generate a sequence of numbers between the last dial value and the new one.
-        #Exclude the previous dial value and include the new value.
-        #Count the number of zeroes or multiples of 100 within that range. Jank alert.
-        numZeroes += sum(abs(x) % 100 == 0 for x in range(ld, d + dir, dir)[1:])
-    
+    dir = -1 if i < 0 else 1 #Sign of input value.
+    #Generate a sequence of numbers between the last dial value and the new one.
+    #Exclude the previous dial value and include the new value.
+    #Count the number of zeroes or multiples of 100 within that range. Jank alert.
+    numZeroes += sum(abs(x) % 100 == 0 for x in range(ld, d + dir, dir)[1:])
+
     ld = d
 
 print(f"{numZeroes = }") #Woah self-documenting f-string.
