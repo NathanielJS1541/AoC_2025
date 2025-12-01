@@ -6,23 +6,20 @@ input = open("input.txt").readlines()
 #Convert to positive/negative ints: L50 to -50, R20 to 20, etc.
 input = [-int(i[1:]) if i[0] == 'L' else int(i[1:]) for i in input]
 
-d = 50 #Current dial value.
+d = 50 #Dial value.
 ld = None #Last dial value.
 numZeroes = 0 #Puzzle answer.
 
 for i in input:
-    d += i #Rotate dial.
+    d += i
     
-    #Count number of rotations through 0.
     if ld != None:
+        dir = -1 if i < 0 else 1 #Sign of input value.
         #Generate a sequence of numbers between the last dial value and the new one.
-        #Count the number of zeroes or multiples of 100 in that range. Jank alert.
-        numZeroes += sum(abs(x) % 100 == 0 for x in range(ld, d, 1 if d > ld else -1)[1:])
+        #Exclude the previous dial value and include the new value.
+        #Count the number of zeroes or multiples of 100 within that range. Jank alert.
+        numZeroes += sum(abs(x) % 100 == 0 for x in range(ld, d + dir, dir)[1:])
     
     ld = d
-        
-    #If new value is 0 or multiple of 100.
-    if abs(d) % 100 == 0:
-        numZeroes += 1
 
 print(f"{numZeroes = }") #Woah self-documenting f-string.
