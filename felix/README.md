@@ -33,9 +33,9 @@ I'll be uploading my solutions as .txt files of the Excel formula from that cell
 Prepare yourself for some awful hacks.
 
 
-===================================================================================================================================
 Day 01
 ===================================================================================================================================
+
 Came into some issues with Excel's max stack depth while doing this one. The limit applies to both the recursion depth and number
  of LETs, so forgive all the repetition.
 
