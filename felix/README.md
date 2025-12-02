@@ -24,9 +24,12 @@
 ```
 
 Abandon hope, all ye who enter here.
+
 This year I will be abusing Excel some more, but with the strict rule that all formulas must be in a single cell to ensure proper
  functional programming.
+ 
 I'll be uploading my solutions as .txt files of the Excel formula from that cell.
+
 Prepare yourself for some awful hacks.
 
 
@@ -37,6 +40,7 @@ Came into some issues with Excel's max stack depth while doing this one. The lim
  of LETs, so forgive all the repetition.
 
 Without the recursion limits, d1p1 would be as below. I've added C-style comments since Excel doesn't have comments built-in.
+
 =LET(
     // Pre-processing
     input, A2:A11, // Get input range
