@@ -15,6 +15,7 @@ for r in ranges:
   for i in r:
     #Check if the whole ID is composed of a group of one or more digits that repeats two or more times.
     if re.search(r"^(\d+)\1+$", str(i)):
+      #Therefore ID is invalid.
       sumInvalid += i
 
 print(f"{sumInvalid = }")
