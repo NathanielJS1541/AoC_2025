@@ -1,0 +1,17 @@
+=LET(
+    input, A1:A4424,
+    nums, NUMBERVALUE(MID(input, 2, LEN(input)-1)),
+    signedNums, IF(LEFT(input, 1)="L", -1*nums, nums),
+    F, LAMBDA(G,X,L,
+        IF(X=0, 1, 0) + IF(
+            ROWS(L) > 1,
+            IF(MOD(X+INDEX(L, 1), 100)=0, 1, 0) + IF(
+                ROWS(L)>2,
+                G(G, MOD(MOD(X+INDEX(L, 1),100)+INDEX(L, 2),100), DROP(L, 2)),
+                0
+            ),
+            0
+        )
+    ),
+    F(F,50, signedNums)
+)
