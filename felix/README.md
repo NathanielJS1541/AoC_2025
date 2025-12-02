@@ -40,7 +40,7 @@ Came into some issues with Excel's max stack depth while doing this one. The lim
  of LETs, so forgive all the repetition.
 
 Without the recursion limits, d1p1 would be as below. I've added C-style comments since Excel doesn't have comments built-in.
-
+```
 =LET(
     // Pre-processing
     input, A2:A11, // Get input range
@@ -57,6 +57,7 @@ Without the recursion limits, d1p1 would be as below. I've added C-style comment
     // Recursion
     F(F,50, signedNums)
 )
+```
 
 To avoid the recursion limit, two list elements are handled in each call. A similar technique is used in d1p2.
 
@@ -68,6 +69,7 @@ Day 2
 
 Many learnings on MAPs and BYROWs today. Starting to develop a structured approach. Commented part 2 formula below.
 
+```
 =LET(
 
     // This function is called on each range defined in the input it returns the sum of all the invalid IDs in that range
@@ -138,3 +140,4 @@ Many learnings on MAPs and BYROWs today. Starting to develop a structured approa
     // Return the sum of the invalid IDs in all ranges
     SUM(r)
 )
+```
