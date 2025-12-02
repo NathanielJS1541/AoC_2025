@@ -1,21 +1,27 @@
 =LET(
     input, A1:A4424,
-    nums, NUMBERVALUE(MID(input, 2, LEN(input)-1)),
-    signedNums,IF(LEFT(input, 1)="L", -1*nums,nums),
+    nums, NUMBERVALUE(MID(input, 2, LEN(input) - 1)),
+    signedNums, IF(LEFT(input, 1) = "L", -1 * nums, nums),
     calcClicks, LAMBDA(start,offset,
-        IF(AND(MOD(start,100)=0, (start+offset-MOD(start+offset,100))/100<(start-MOD(start,100))/100), -1, 0)
-        +IF(AND(MOD(start+offset,100)=0, (start+offset-MOD(start+offset,100))/100<=(start-MOD(start,100))/100), 1, 0)
-        +ABS(MOD(start,100)+offset-MOD(start+offset,100))/100),
+        IF(AND(
+            MOD(start, 100) = 0,
+            offset - MOD(start + offset, 100) < MOD(start, 100)
+            ), -1, 0)
+        + IF(AND(
+            MOD(start + offset, 100) = 0,
+            MOD(start + offset, 100) - offset >= MOD(start, 100)
+            ), 1, 0)
+        + ABS(MOD(start, 100) + offset - MOD(start + offset, 100)) / 100),
     F, LAMBDA(G,X,L,
-        calcClicks(X,INDEX(L,1)) + IF(
-            ROWS(L)>1,
-            calcClicks(X+INDEX(L,1), INDEX(L,2)) + IF(
-                ROWS(L)>2,
-                G(G, X+INDEX(L,1)+INDEX(L,2), DROP(L,2)),
+        calcClicks(X, INDEX(L, 1)) + IF(
+            ROWS(L) > 1,
+            calcClicks(X + INDEX(L, 1), INDEX(L, 2)) + IF(
+                ROWS(L) > 2,
+                G(G, X + INDEX(L, 1) + INDEX(L, 2), DROP(L, 2)),
                 0
             ),
             0
         )
     ),
-    F(F,50, signedNums)
+    F(F, 50, signedNums)
 )
