@@ -8,7 +8,7 @@ know relatively well for the harder challenges (if I even get that far!).
 I've put each day's solution in a different directory to account for the
 structures needed for different languages, or languages that require
 supplementary files (i.e. `Makefile`). The table below can be used as a brief
-overview of which challenges I've solved, and which challenges I've done to do
+overview of which challenges I've solved, and which languages I've used to do
 so.
 
 |         **Solution**        |                **Language**                |
