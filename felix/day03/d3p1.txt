@@ -1,0 +1,14 @@
+=LET(
+    DO_ROW, LAMBDA(ROW,
+        LET(
+        digits, NUMBERVALUE(MID(ROW, SEQUENCE(1, LEN(ROW)), 1)),
+        leftDigits, DROP(digits,0,-1),
+        first, MAX(leftDigits),
+        i_first, MATCH(first, leftDigits, 0),
+        rightDigits, DROP(digits,0,i_first),
+        second, MAX(rightDigits),
+        NUMBERVALUE(CONCAT(first,second))
+        )
+    ),
+    SUM(BYROW(A1:A200, DO_ROW))
+)
