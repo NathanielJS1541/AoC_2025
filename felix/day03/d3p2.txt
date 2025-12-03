@@ -1,0 +1,26 @@
+=LET(
+    DO_ROW, LAMBDA(ROW,
+        LET(
+            allDigits, NUMBERVALUE(MID(ROW, SEQUENCE(1, LEN(ROW)), 1)),
+            CHOOSE_DIGITS, LAMBDA(ME,digits,numToChoose,
+                LET(
+                    leftDigits, DROP(digits, 0, 1 - numToChoose),
+                    first, MAX(leftDigits),
+                    CONCAT(
+                        first,
+                        IF(numToChoose>1,
+                            LET(
+                                i_first, MATCH(first, leftDigits, 0),
+                                rightDigits, DROP(digits, 0, i_first),
+                                ME(ME, rightDigits, numToChoose-1)
+                            ),
+                            ""
+                        )
+                    )
+                )
+            ),
+            CHOOSE_DIGITS(CHOOSE_DIGITS, allDigits, 12)
+        )
+    ),
+    SUM(NUMBERVALUE(BYROW(A1:A200, DO_ROW)))
+)
