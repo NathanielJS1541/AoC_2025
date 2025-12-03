@@ -22,20 +22,20 @@ Options
     -i <input>    [REQUIRED] Path to the challenge input file.
 EOF
 
-# Function to solve the day 01 challenge using the supplied input, and write the
-# results for part 1 and 2 to an array passed in by name.
+# Function to count the number of times the dial lands on or passes over 0 in
+# the supplied input, and write the result to an array passed in by name.
 #
 # The solutions array passed by name will be updated to contain two elements:
 # - [0]: The number of times the dial lands on 0.
-# - [1]: The solution to part 2.
+# - [1]: The total number of times the dial passes over 0.
 #
 # Arguments:
 # - $1: The name of the array variable containing the input data.
 # - $2: The name of the array variable to write the solutions to.
 #
 # Usage:
-#   solve_day01 <input_array_name> <solutions_array_name>
-solve_day01() {
+#   count_zeros <input_array_name> <solutions_array_name>
+count_zeros() {
     # Declare a nameref variable to the input array variable to access the input
     # data.
     local -n input=$1
@@ -44,8 +44,9 @@ solve_day01() {
     # caller.
     local -n results=$2
 
-    # Local variable to count the number of times the dial lands on 0.
-    local zero_landings=0
+    # Local variables to count the number of times the dial lands on 0, and the
+    # number of times the dial passes over 0 without landing on it.
+    local zero_landings=0 zero_passes=0
 
     # The dial starts pointing at position 50.
     local dial_position=50
@@ -60,12 +61,22 @@ solve_day01() {
             direction=${BASH_REMATCH[1]}
             distance=${BASH_REMATCH[2]}
 
-            # Update the dial position based on the direction and distance.
-            # Right moves the dial in the positive direction, left moves the
-            # dial in the negative direction.
+            # Cancel out all full rotations from the distance, as these are each
+            # guaranteed to pass through 0 once and do not change the dial
+            # value.
+            if [[ "$distance" -gt 100 ]]; then
+                zero_passes=$(( zero_passes + (distance / 100) ))
+                distance=$(( distance % 100 ))
+            fi
+
+            # Update the dial position based on the direction and remaining
+            # distance:
+            # - Right moves the dial in the positive direction.
+            # - Left moves the dial in the negative direction.
+            local new_dial_position
             case "$direction" in
-                R) dial_position=$(( dial_position + distance ));;
-                L) dial_position=$(( dial_position - distance ));;
+                R) new_dial_position=$(( dial_position + distance ));;
+                L) new_dial_position=$(( dial_position - distance ));;
                 *)
                     # If the direction is not recognised, print an error message
                     # and exit with an error code.
@@ -73,21 +84,40 @@ solve_day01() {
                     exit $ERR_INPUT;;
             esac
 
-            # Cancel out all full rotations from the dial_position. This value
-            # is now constrained between -99 an 99.
-            dial_position=$(( dial_position % 100 ))
-
-            # If the constrained value is negative, it should wrap back around
-            # past 100. Add 100 if it is negative to achieve this.
-            if [[ "$dial_position" -lt 0 ]]; then
-                dial_position=$(( dial_position + 100 ))
+            # The new_dial_position will now be in the range -99 to 198, as all
+            # full rotations were accounted for above. Values outside of the
+            # range 0-99 need to be constrained further, counting any zero
+            # crossings.
+            if [[ "$new_dial_position" -lt 0 ]]; then
+                # If new_dial_position is negative, add 100 to cause it to "wrap
+                # around" back past 99.
+                new_dial_position=$(( new_dial_position + 100 ))
+                # If the dial position before the move was not 0, then the move
+                # must have passed 0. If the dial was already at 0, it was
+                # already counted when the dial landed on 0.
+                if [[ "$dial_position" -ne 0 ]]; then
+                    ((zero_passes++))
+                fi
+            elif [[ "$new_dial_position" -ge 100 ]]; then
+                # If new_dial_position is 100 or greater, subtract 100 to cause
+                # it to "wrap around" back past 0.
+                new_dial_position=$(( new_dial_position - 100 ))
+                # This always causes the dial to cross 0. However, there is a
+                # check later to count when the dial lands on 0, so only
+                # increment here if the dial only passes 0.
+                if [[ "$new_dial_position" -ne 0 ]]; then
+                    ((zero_passes++))
+                fi
             fi
 
             # If a dial position of 0 was reached at the end of a movement,
             # increment the zero_landings counter.
-            if [[ "$dial_position" -eq 0 ]]; then
+            if [[ "$new_dial_position" -eq 0 ]]; then
                 ((zero_landings++))
             fi
+
+            # Update the dial position for the next iteration.
+            dial_position=$new_dial_position
         else
             # If the rotation format is invalid, print an error message and
             # exit with an error code.
@@ -97,9 +127,9 @@ solve_day01() {
     done
 
     # Write the solutions to the results nameref array:
-    # - Part 1: number of times the dial landed on 0.
-    # - Part 2: dummy value...
-    results=("$zero_landings" "TODO")
+    # - Part 1: the number of times the dial lands on 0.
+    # - Part 2: the total number of times the dial passes 0.
+    results=("$zero_landings" "$((zero_landings + zero_passes))")
 }
 
 # Main function to parse arguments and execute the script logic.
@@ -164,9 +194,12 @@ main() {
     # Declare an array to hold the solutions for each part of the challenge.
     declare -a solutions
 
-    # Pass the input data and solutions arrays by name to the function to solve
-    # the day 01 challenge.
-    solve_day01 input_data solutions
+    # Pass the input data and solutions arrays by name to the function to count
+    # the number of times the dial lands on and passes over 0 in the data. The
+    # solutions array will contain two separate counts:
+    # - The number of times the dial lands on 0.
+    # - The total number of times the dial passes 0.
+    count_zeros input_data solutions
 
     # Print the solutions to stdout.
     echo "AoC 2025 Day 01 Solutions:"
