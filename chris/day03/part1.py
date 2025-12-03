@@ -3,7 +3,7 @@
 #Oh my goodness a one-liner and it's hideous.
 print(f"joltage = {sum(int(max(s[:-1]) + max(s[s[:-1].find(max(s[:-1]))+1:])) for s in open('input.txt').read().splitlines())}")
 
-
+#==================================
 #And now the more sensible version:
 
 joltage = 0 #Puzzle answer.
