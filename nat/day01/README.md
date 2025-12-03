@@ -1,6 +1,6 @@
 # Nat's AoC 2025 Day 01 Solution
 
-My solution to the [Advent of Code Day 01](https://adventofcode.com/2025/days/1)
+My solution to the [Advent of Code Day 01](https://adventofcode.com/2025/day/1)
 is written in [bash](https://www.gnu.org/software/bash/), and expects the input
 data to be passed in as a text file using command line arguments. See
 [usage](#usage) for more details.
