@@ -141,3 +141,53 @@ Many learnings on MAPs and BYROWs today. Starting to develop a structured approa
     SUM(r)
 )
 ```
+
+
+Day 3
+===================================================================================================================================
+
+Found today much easier than day 2, maybe because the problem more naturally lends itself to functional programming, maybe because
+ I'm getting better?
+
+```
+=LET(
+
+    // Takes an input row and gets the (string) 12-digit number result
+    DO_ROW, LAMBDA(ROW,
+        LET(
+
+            // Split the row out into individual digits
+            allDigits, NUMBERVALUE(MID(ROW, SEQUENCE(1, LEN(ROW)), 1)),
+
+            // Takes a sub-string and finds the maximum number that can be formed using numToChoose digits
+            CHOOSE_DIGITS, LAMBDA(ME,digits, numToChoose,
+                LET(
+
+                    // Since we have to choose n digits from an m-digit number and keep them in order, the first chosen digit must
+                    //  be in the first (m-n+1) digits. 
+                    leftDigits, DROP(digits, 0, 1 - numToChoose),
+                    first, MAX(leftDigits),
+                    CONCAT(
+                        first,
+
+                        // If we've more digits to choose, then recurse, considering the part of the input number to the right of
+                        //  the chosen digit.
+                        IF(numToChoose > 1,
+                            LET(
+                                i_first, MATCH(first, leftDigits, 0),
+                                rightDigits, DROP(digits, 0, i_first),
+                                ME(ME, rightDigits, numToChoose - 1)
+                            ),
+                            ""
+                        )
+                    )
+                )
+            ),
+            CHOOSE_DIGITS(CHOOSE_DIGITS, allDigits, 12)
+        )
+    ),
+
+    // Sum the results of all the input rows
+    SUM(NUMBERVALUE(BYROW(A1:A200, DO_ROW)))
+)
+```
