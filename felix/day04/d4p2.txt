@@ -1,0 +1,56 @@
+=LET(
+    input, A1:A140,
+    nrows, ROWS(input),
+    ncols, LEN(INDEX(input, 1)),
+    PAD_ROW, LAMBDA(row, CONCAT(".", row, ".")),
+    padded, VSTACK(
+        REPT(".", ncols + 2),
+        BYROW(input, PAD_ROW),
+        REPT(".", ncols + 2)
+    ),
+    split, IF(MID(padded, SEQUENCE(1, ncols + 2), 1) = "@", 1, 0),
+    HROLL, LAMBDA(M, n,
+        IF(n=0,
+            M,
+            IF(n > 0,
+                HSTACK(DROP(M, 0, COLUMNS(M) - n), DROP(M, 0, -n)),
+                HSTACK(DROP(M, 0, -n), DROP(M, 0, -n - COLUMNS(M)))
+            )
+        )
+    ),
+    VROLL, LAMBDA(M, n,
+        IF(n = 0,
+            M,
+            IF(n > 0,
+                VSTACK(DROP(M, ROWS(M) - n), DROP(M, -n)),
+                VSTACK(DROP(M, -n),DROP(M,-n - ROWS(M)))
+            )
+        )
+    ),
+    UPDATE, LAMBDA(M,
+        LET(
+        hrollLeft, HROLL(M, -1),
+        hrollRight, HROLL(M, 1),
+        summed, VROLL(hrollLeft, -1)
+              + hrollLeft
+              + VROLL(hrollLeft, 1)
+              + VROLL(M, -1)
+              + VROLL(M, 1)
+              + VROLL(hrollRight, -1)
+              + hrollRight
+              + VROLL(hrollRight, 1),
+        M-(summed<4)*M
+        )
+    ),
+    UPDATE_UNTIL_STEADY, LAMBDA(ME, M,lastCount,
+        LET(
+            newM, UPDATE(M),
+            newCount, SUM(newM),
+            IF(newCount=lastCount,
+                0,
+                (lastCount-newCount) + ME(ME, newM, newCount)
+            )
+        )
+    ),
+    UPDATE_UNTIL_STEADY(UPDATE_UNTIL_STEADY, split, SUM(split))
+)

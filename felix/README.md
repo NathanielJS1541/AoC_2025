@@ -191,3 +191,80 @@ Found today much easier than day 2, maybe because the problem more naturally len
     SUM(NUMBERVALUE(BYROW(A1:A200, DO_ROW)))
 )
 ```
+
+Day 4
+===================================================================================================================================
+
+Did part 1 the Naiive way, but convolution seeemed so obvious when I realised it was the right tool for the job.
+
+Commented part 2:
+
+```
+=LET(
+
+    // Input data parsing - split into a 2D array of 1 and 0 padded with 0.
+    input, A1:A140,
+    nrows, ROWS(input),
+    ncols, LEN(INDEX(input, 1)),
+    PAD_ROW, LAMBDA(row, CONCAT(".", row, ".")),
+    padded, VSTACK(
+        REPT(".", ncols + 2),
+        BYROW(input, PAD_ROW),
+        REPT(".", ncols + 2)
+    ),
+    split, IF(MID(padded, SEQUENCE(1, ncols + 2), 1) = "@", 1, 0),
+
+    // These two functions are based on numpy.roll (look it up)
+    HROLL, LAMBDA(M, n,
+        IF(n=0,
+            M,
+            IF(n > 0,
+                HSTACK(DROP(M, 0, COLUMNS(M) - n), DROP(M, 0, -n)),
+                HSTACK(DROP(M, 0, -n), DROP(M, 0, -n - COLUMNS(M)))
+            )
+        )
+    ),
+    VROLL, LAMBDA(M, n,
+        IF(n = 0,
+            M,
+            IF(n > 0,
+                VSTACK(DROP(M, ROWS(M) - n), DROP(M, -n)),
+                VSTACK(DROP(M, -n),DROP(M,-n - ROWS(M)))
+            )
+        )
+    ),
+
+    // This function removes all the accessible rolls
+    UPDATE, LAMBDA(M,
+        LET(
+        hrollLeft, HROLL(M, -1),
+        hrollRight, HROLL(M, 1),
+        summed, VROLL(hrollLeft, -1)
+              + hrollLeft
+              + VROLL(hrollLeft, 1)
+              + VROLL(M, -1)
+              + VROLL(M, 1)
+              + VROLL(hrollRight, -1)
+              + hrollRight
+              + VROLL(hrollRight, 1),
+        M-(summed<4)*M
+        )
+    ),
+
+    // This function keeps removing all accessible rolls until an update runs where no changes are made.
+    // It returns the number of rolls which have been removed.
+    UPDATE_UNTIL_STEADY, LAMBDA(ME, M,lastCount,
+        LET(
+            newM, UPDATE(M),
+            newCount, SUM(newM),
+            IF(newCount=lastCount,
+                0,
+                (lastCount-newCount) + ME(ME, newM, newCount)
+            )
+        )
+    ),
+
+    // Return the total number of rolls removed.
+    UPDATE_UNTIL_STEADY(UPDATE_UNTIL_STEADY, split, SUM(split))
+)
+```
