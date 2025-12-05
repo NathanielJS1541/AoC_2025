@@ -277,6 +277,9 @@ Day 05
 Part 1: Initially did some complicated pre-processing to reduce overlapping ranges, but found that in the end this only halved
          the number of ranges and made little difference to computation time, so got rid of it for the final code.
 
+Part 2: Result, already did this for my overcomplicated part 1 - just needed one extra lambda to calculate the number of IDs in
+         each range of minimisedRanges.
+
 Commented part 1 with pre-processing:
 ```
 =LET(
