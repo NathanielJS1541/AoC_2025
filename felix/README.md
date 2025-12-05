@@ -192,6 +192,7 @@ Found today much easier than day 2, maybe because the problem more naturally len
 )
 ```
 
+
 Day 4
 ===================================================================================================================================
 
@@ -266,5 +267,73 @@ Commented part 2:
 
     // Return the total number of rolls removed.
     UPDATE_UNTIL_STEADY(UPDATE_UNTIL_STEADY, split, SUM(split))
+)
+```
+
+
+Day 05
+===================================================================================================================================
+
+Part 1: Initially did some complicated pre-processing to reduce overlapping ranges, but found that in the end this only halved
+         the number of ranges and made little difference to computation time, so got rid of it for the final code.
+
+Commented part 1 with pre-processing:
+```
+=LET(
+
+    // Parse input
+    hashSeparated, TEXTSPLIT(TEXTJOIN("#", FALSE, A1:A1175), , "##"),
+    ranges, NUMBERVALUE(TEXTSPLIT(CONCAT(INDEX(hashSeparated, 1)), "-", "#")),
+    availableIDs, NUMBERVALUE(TEXTSPLIT(CONCAT(INDEX(hashSeparated, 2)), "#")),
+
+    // Sort the ranges by their start ID
+    sortedRanges, SORTBY(ranges, BYROW(ranges, LAMBDA(row, INDEX(row, , 1)))),
+
+    // Scans through the sorted list of ranges, splitting off a new range from the front every time a gap between ranges is found.
+    MINIMISE_RANGES, LAMBDA(ME, s, e, list,
+        IF(ROWS(list) > 1,
+            LET(
+                next_s, INDEX(list, 1, 1),
+                next_e, INDEX(list, 1, 2),
+                IF(next_s <= e + 1,
+                    // No gap - combine the next range with the current range
+                    ME(ME, s, MAX(e, next_e), DROP(list, 1)),
+
+                    // Gap - split off the current range before continuing 
+                    VSTACK(HSTACK(s, e), ME(ME, next_s, next_e, DROP(list, 1)))
+                )
+            ),
+        VSTACK(HSTACK(s, e), list)
+        )
+    ),
+
+    // Remove overlapping ranges
+    minimisedRanges, DROP(MINIMISE_RANGES(MINIMISE_RANGES, -1, -1, sortedRanges), 1),
+
+    // Checks whether a value x is in a 2-element range
+    IN_RANGE, LAMBDA(x, range,
+        ABS(SUM(SIGN(range - x))) < 2
+    ),
+
+    // If X is in any of the list of ranges provided, returns 1, otherwise 0.
+    X_IN_RANGES, LAMBDA(x, ranges,
+        LET(
+
+        // Curried IN_RANGE for a specific X
+        X_IN_RANGE, LAMBDA(range,
+            IN_RANGE(x, range)
+        ),
+
+        IF(OR(BYROW(ranges, X_IN_RANGE)), 1, 0)
+        )
+    ),
+
+    // Curried X_IN_RANGES for minimisedRanges
+    XS_IN_MINIMISED_RANGES, LAMBDA(X,
+        X_IN_RANGES(X, minimisedRanges)
+    ),
+
+    //Count the number of IDs which are in any range
+    SUM(MAP(availableIDs, XS_IN_MINIMISED_RANGES))
 )
 ```
