@@ -11,6 +11,7 @@ supplementary files (i.e. `Makefile`). The table below can be used as a brief
 overview of which challenges I've solved, and which languages I've used to do
 so.
 
-|         **Solution**        |                **Language**                |
+|        **Solution**         |                **Language**                |
 |:---------------------------:|:------------------------------------------:|
 | [Day 01](./day01/README.md) | [bash](https://www.gnu.org/software/bash/) |
+| [Day 02](./day02/README.md) |       [Perl](https://www.perl.org/)        |
