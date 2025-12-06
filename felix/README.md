@@ -215,7 +215,7 @@ Commented part 2:
     ),
     split, IF(MID(padded, SEQUENCE(1, ncols + 2), 1) = "@", 1, 0),
 
-    // These two functions are based on numpy.roll (look it up)
+    // These two functions are based on [numpy.roll()](https://numpy.org/doc/2.1/reference/generated/numpy.roll.html)
     HROLL, LAMBDA(M, n,
         IF(n=0,
             M,
@@ -235,11 +235,15 @@ Commented part 2:
         )
     ),
 
-    // This function removes all the accessible rolls
+    // This function removes all the accessible rolls from a binary grid and returns a new grid.
     UPDATE, LAMBDA(M,
         LET(
+        // Create copies of the grid M rotated right and left
         hrollLeft, HROLL(M, -1),
         hrollRight, HROLL(M, 1),
+
+        // Create 8 total copies of the grid rotated to each of the adjacent positions and sum them all
+        // Each cell now contains a value saying how many adjacent rolls it has.
         summed, VROLL(hrollLeft, -1)
               + hrollLeft
               + VROLL(hrollLeft, 1)
@@ -248,13 +252,15 @@ Commented part 2:
               + VROLL(hrollRight, -1)
               + hrollRight
               + VROLL(hrollRight, 1),
-        M-(summed<4)*M
+
+        // M is all 0 or 1, so subtract 1 from every cell with < 4 adjacents to remove that roll.
+        M - (summed < 4) * M
         )
     ),
 
     // This function keeps removing all accessible rolls until an update runs where no changes are made.
-    // It returns the number of rolls which have been removed.
-    UPDATE_UNTIL_STEADY, LAMBDA(ME, M,lastCount,
+    // It returns the total number of rolls which have been removed.
+    UPDATE_UNTIL_STEADY, LAMBDA(ME, M, lastCount,
         LET(
             newM, UPDATE(M),
             newCount, SUM(newM),
@@ -286,7 +292,7 @@ Commented part 1 with pre-processing:
 
     // Parse input
     hashSeparated, TEXTSPLIT(TEXTJOIN("#", FALSE, A1:A1175), , "##"),
-    ranges, NUMBERVALUE(TEXTSPLIT(CONCAT(INDEX(hashSeparated, 1)), "-", "#")),
+    ranges, NUMBERVALUE(TEXTSPLIT(CONCAT(INDEX(hashSeparated, 1)), "-", "#")), // Single-parameter CONCAT to force string type
     availableIDs, NUMBERVALUE(TEXTSPLIT(CONCAT(INDEX(hashSeparated, 2)), "#")),
 
     // Sort the ranges by their start ID
@@ -338,5 +344,80 @@ Commented part 1 with pre-processing:
 
     //Count the number of IDs which are in any range
     SUM(MAP(availableIDs, XS_IN_MINIMISED_RANGES))
+)
+```
+
+
+Day 06
+===================================================================================================================================
+
+Part 1: Had a sneaky suspicion that the left/right justification might be important later so made a parser which keeps whitespace.
+
+Part 2: As expected, that whitespace came in very handy - just a bit of transposing in each problem, otherwise it's all the same.
+
+
+Commented part 2
+
+```
+=LET(
+    input, A1:A5,
+
+    // Number of operands in all the problems
+    operandCount, ROWS(input) - 1,
+
+    // Bottom row of '*' and '+'
+    operators, TEXTSPLIT(INDEX(input, operandCount+1), " ", , TRUE),
+
+    problemCount, COLUMNS(operators),
+    operandRows, DROP(input, -1),
+
+    // Width of the input in characters
+    rowLenChars, LEN(INDEX(input, 1)),
+
+    // Create a mask of where the space colummns are
+    spaceMask, MID(operandRows, SEQUENCE(1, rowLenChars), 1) = " ",
+    spaceColsMask, BYCOL(spaceMask, AND),
+    
+    // Takes a string and replaces the chars specified by spaceColsMask with '#'
+    REPLACE_BY_MASK, LAMBDA(str,
+        LET(
+            asciiIn, CODE(MID(str, SEQUENCE(1, rowLenChars), 1)),
+            replacedAscii, asciiIn + spaceColsMask * (CODE("#") - CODE(" ")),
+            CONCAT(CHAR(replacedAscii))
+        )
+    ),
+
+    // Turn concatenate the rows of operand data (each like x#y#z) by "|". Avoids illegal nested arrays.
+    delimitedString, TEXTJOIN("|", FALSE, BYROW(operandRows, REPLACE_BY_MASK)),
+
+    // Split the operand strings out into a 2D array
+    operands, TEXTSPLIT(delimitedString, "#", "|"),
+
+    // Computes the result of one problem. Uses 'operators' and 'operands' from above.
+    COMPUTE_COL, LAMBDA(colIndex,
+        LET(
+            // Index into 'operators' and 'operands' to get this problem
+            operator, INDEX(operators, 1, colIndex),
+            eqnOperands, CHOOSECOLS(operands, colIndex),
+
+            // Split each operand (row) into a char array, transpose, then concatenate each row.
+            transposedOperands, NUMBERVALUE(BYROW(
+                TRANSPOSE(MID(
+                    eqnOperands,
+                    SEQUENCE(1, MAX(LEN(eqnOperands))),
+                    1
+                )),
+                CONCAT
+            )),
+
+            IF(operator = "+",
+                SUM(transposedOperands),
+                PRODUCT(transposedOperands)
+            )
+        )
+    ),
+
+    // Solve all the problems separately and sum their results
+    SUM(MAP(SEQUENCE(1, problemCount), COMPUTE_COL))
 )
 ```
