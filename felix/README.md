@@ -215,7 +215,7 @@ Commented part 2:
     ),
     split, IF(MID(padded, SEQUENCE(1, ncols + 2), 1) = "@", 1, 0),
 
-    // These two functions are based on numpy.roll (look it up)
+    // These two functions are based on [numpy.roll()](https://numpy.org/doc/2.1/reference/generated/numpy.roll.html)
     HROLL, LAMBDA(M, n,
         IF(n=0,
             M,
@@ -235,11 +235,15 @@ Commented part 2:
         )
     ),
 
-    // This function removes all the accessible rolls
+    // This function removes all the accessible rolls from a binary grid and returns a new grid.
     UPDATE, LAMBDA(M,
         LET(
+        // Create copies of the grid M rotated right and left
         hrollLeft, HROLL(M, -1),
         hrollRight, HROLL(M, 1),
+
+        // Create 8 total copies of the grid rotated to each of the adjacent positions and sum them all
+        // Each cell now contains a value saying how many adjacent rolls it has.
         summed, VROLL(hrollLeft, -1)
               + hrollLeft
               + VROLL(hrollLeft, 1)
@@ -248,13 +252,15 @@ Commented part 2:
               + VROLL(hrollRight, -1)
               + hrollRight
               + VROLL(hrollRight, 1),
-        M-(summed<4)*M
+
+        // M is all 0 or 1, so subtract 1 from every cell with < 4 adjacents to remove that roll.
+        M - (summed < 4) * M
         )
     ),
 
     // This function keeps removing all accessible rolls until an update runs where no changes are made.
-    // It returns the number of rolls which have been removed.
-    UPDATE_UNTIL_STEADY, LAMBDA(ME, M,lastCount,
+    // It returns the total number of rolls which have been removed.
+    UPDATE_UNTIL_STEADY, LAMBDA(ME, M, lastCount,
         LET(
             newM, UPDATE(M),
             newCount, SUM(newM),
@@ -286,7 +292,7 @@ Commented part 1 with pre-processing:
 
     // Parse input
     hashSeparated, TEXTSPLIT(TEXTJOIN("#", FALSE, A1:A1175), , "##"),
-    ranges, NUMBERVALUE(TEXTSPLIT(CONCAT(INDEX(hashSeparated, 1)), "-", "#")),
+    ranges, NUMBERVALUE(TEXTSPLIT(CONCAT(INDEX(hashSeparated, 1)), "-", "#")), // Single-parameter CONCAT to force string type
     availableIDs, NUMBERVALUE(TEXTSPLIT(CONCAT(INDEX(hashSeparated, 2)), "#")),
 
     // Sort the ranges by their start ID
