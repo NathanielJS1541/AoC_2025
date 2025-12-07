@@ -1,0 +1,29 @@
+=LET(
+    input, A1:A142,
+    rowChars, LEN(INDEX(input, 1)),
+    inputBeams, MID(CHOOSEROWS(input, 1), SEQUENCE(1, rowChars), 1) = "S",
+    inputSplitterRows, MID(CHOOSEROWS(input, SEQUENCE(1, (ROWS(input) - 1)/2, 3, 2)), SEQUENCE(1, rowChars), 1),
+    HSHIFT, LAMBDA(M,n,pad,
+        IF(n = 0,
+        M,
+            IF(n > 0,
+                HSTACK(IF(SEQUENCE(1, n, 1, 0), pad), DROP(M, 0, -n)),
+                HSTACK(DROP(M, 0, -n), IF(SEQUENCE(1, -n, 1, 0), pad))
+            )
+        )
+    ),
+    COUNT_ACTIVE_SPLITTERS, LAMBDA(ME,beams,splitterRows,
+        LET(
+            row, CHOOSEROWS(splitterRows, 1) = "^",
+            activeSplitters, beams * row,
+            activeSplitterCount, SUM(IF(activeSplitters, 1, 0)),
+            passThroughs, beams * NOT(row),
+            newBeams, (HSHIFT(activeSplitters, 1, 0) + HSHIFT(activeSplitters, -1, 0) + passThroughs) > 0,
+            activeSplitterCount + IF(ROWS(splitterRows) > 1,
+                ME(ME, newBeams, DROP(splitterRows, 1)),
+                0
+            )
+        )
+    ),
+    COUNT_ACTIVE_SPLITTERS(COUNT_ACTIVE_SPLITTERS, inputBeams, inputSplitterRows)
+)

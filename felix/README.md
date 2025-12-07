@@ -421,3 +421,74 @@ Commented part 2
     SUM(MAP(SEQUENCE(1, problemCount), COMPUTE_COL))
 )
 ```
+
+
+Day 07
+===================================================================================================================================
+
+Part 1: Straightforward enough. Generally trying to use ints instead of bools now since there's no element-wise AND/OR. Spent some
+         time polishing this up after seeing the part 2 problem.
+
+Part 2: Works by following the beams back up, with a count of how many timelines are in each beam. Splitters become adders.
+
+
+Commented part 2:
+
+```
+=LET(
+    input, A1:A142,
+    rowChars, LEN(INDEX(input, 1)),
+
+    // First input row giving the beam source
+    inputBeams, MID(CHOOSEROWS(input, 1), SEQUENCE(1, rowChars), 1) = "S",
+
+    // Select only the input rows with splitters
+    inputSplitterRows, MID(CHOOSEROWS(input, SEQUENCE(1, (ROWS(input) - 1)/2, 3, 2)), SEQUENCE(1, rowChars), 1),
+    
+    // Shift an array to the right or left, dropping any elements shifted out of range and padding with 'pad'
+    HSHIFT, LAMBDA(M,n,pad,
+        IF(n = 0,
+            M,
+            IF(n > 0,
+                HSTACK(IF(SEQUENCE(1, n, 1, 0), pad), DROP(M, 0, -n)),
+                HSTACK(DROP(M, 0, -n), IF(SEQUENCE(1, -n, 1, 0), pad))
+            )
+        )
+    ),
+    
+    // For a given set of input beams and splitter network, calculate how many timelines each beam splits into.
+    COMPUTE_TIMELINES, LAMBDA(ME,beams,splitterRows,
+        LET(
+
+            // All spliters in this row
+            row, CHOOSEROWS(splitterRows, 1) = "^",
+
+            // Row of 1 or 0 representing whether there is a splitter with a beam going into it at each position.
+            activeSplitters, beams * row,
+
+            // Count the number of active splitters in the row - this was used in part 1
+            activeSplitterCount, SUM(IF(activeSplitters, 1, 0)),
+
+            // Beams which pass through without hitting a splitter
+            passThroughs, beams * NOT(row),
+
+            // Next beams come from splitters or passThroughs
+            newBeams, (HSHIFT(activeSplitters, 1, 0) + HSHIFT(activeSplitters, -1, 0) + passThroughs) > 0,
+
+            // If there are more rows of spliter to come, recurse.
+            upBeams, IF(ROWS(splitterRows) > 1,
+                ME(ME, newBeams, DROP(splitterRows, 1)),
+                IF(newBeams, 1, 0)
+            ),
+            
+            // Follow the beams back up, keeping track of how many timelines exist in each beam.
+            // Splitters add the number of timelines in each beam below them, and passThroughs still do just that.
+            (HSHIFT(upBeams, 1, 0) + HSHIFT(upBeams, -1, 0)) * activeSplitters + upBeams * passThroughs
+        )
+    ),
+    
+    // Find the number of timelines for the source beam.
+    // The top-level recursion result should just have 1 value at the source location surrounded by zero
+    SUM(COMPUTE_TIMELINES(COMPUTE_TIMELINES, inputBeams, inputSplitterRows))
+)
+```
