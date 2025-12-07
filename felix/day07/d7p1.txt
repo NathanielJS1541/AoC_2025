@@ -3,32 +3,25 @@
     rowChars, LEN(INDEX(input, 1)),
     inputBeams, MID(CHOOSEROWS(input, 1), SEQUENCE(1, rowChars), 1) = "S",
     inputSplitterRows, MID(CHOOSEROWS(input, SEQUENCE(1, (ROWS(input) - 1)/2, 3, 2)), SEQUENCE(1, rowChars), 1),
-    HROLL, LAMBDA(M,n,
-        IF(n = 0,
-            M,
-            IF(n > 0,
-                HSTACK(DROP(M, 0, COLUMNS(M) - n), DROP(M, 0, -n)),
-                HSTACK(DROP(M, 0, -n), DROP(M, 0, -n - COLUMNS(M)))
-            )
-        )
-    ),
+    
+    HROLL, LAMBDA(M,n,IF(n = 0,M,IF(n > 0,HSTACK(DROP(M, 0, COLUMNS(M) - n), DROP(M, 0, -n)),HSTACK(DROP(M, 0, -n), DROP(M, 0, -n - COLUMNS(M)))))),
+    
     COUNT_ACTIVE_SPLITTERS, LAMBDA(ME,beams,splitterRows,
         LET(
             row, CHOOSEROWS(splitterRows, 1) = "^",
-            activeRow, IF(beams, IF(row, "^", "S"), "."),
-            activeSplitters, HSTACK(FALSE, activeRow="^", FALSE),
+            activeSplitters, HSTACK(FALSE, beams * row, FALSE),
             activeSplitterCount, SUM(IF(activeSplitters, 1, 0)),
+            passThroughs, beams * NOT(row),
+            newBeams, DROP(
+                activeSplitters + HROLL(activeSplitters, -2) + HSTACK(passThroughs, FALSE, FALSE),
+                0, -2
+            ) > 0,
             activeSplitterCount + IF(ROWS(splitterRows) > 1,
-                LET(
-                    newBeams, DROP(
-                        activeSplitters + HROLL(activeSplitters, -2) + HSTACK(activeRow = "S", FALSE, FALSE),
-                        0, -2
-                    ) > 0,
-                    ME(ME, newBeams, DROP(splitterRows, 1))
-                ),
+                ME(ME, newBeams, DROP(splitterRows, 1)),
                 0
             )
         )
     ),
+
     COUNT_ACTIVE_SPLITTERS(COUNT_ACTIVE_SPLITTERS, inputBeams, inputSplitterRows)
 )
