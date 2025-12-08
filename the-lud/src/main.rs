@@ -1,3 +1,4 @@
+#[allow(unused_parens)]
 mod days {
     pub mod day1;
     pub mod day2;
@@ -6,6 +7,7 @@ mod days {
 mod utilities;
 
 use std::env;
+use std::path::Path;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -16,8 +18,8 @@ fn main() {
     }
 
     match args[1].as_str() {
-        "1" => days::day1::solution(std::path::Path::new("./inputs/day1.txt")),
-        "2" => days::day2::solution(),
+        "1" => days::day1::solution(Path::new("./inputs/day1.txt")),
+        "2" => days::day2::solution(Path::new("./inputs/day2.txt")),
         _ => eprintln!(
             "This day has not been completed, or does not exist: {}",
             args[1]

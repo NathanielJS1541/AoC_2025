@@ -1,3 +1,4 @@
+#[allow(unused_parens)]
 /*  DAY 1
  *  SECRET ENTRANCE
  *
@@ -9,7 +10,7 @@
  *  In part two, the solution is the number of times the dial passes through or stops on zero.
  */
 
-use crate::utilities;
+use crate::utilities::do_line_by_line;
 use std::path::Path;
 
 static mut POSITION: i32 = 50;
@@ -77,9 +78,9 @@ fn solve(problem_data_fp: &Path, part: u8) -> i32
     let check_all_zeroes = (part == 2);
     unsafe { POSITION = 50; }
     let mut value = 0;
-    value = utilities::do_line_by_line( value,
-                                        problem_data_fp,
-                                        |v, line| rotate_dial(v, line, check_all_zeroes))
+    value = do_line_by_line( value,
+                            problem_data_fp,
+                            |v, line| rotate_dial(v, line, check_all_zeroes))
             .expect("Failed to process lines");
     return value;
 }
