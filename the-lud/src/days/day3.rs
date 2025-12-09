@@ -72,24 +72,24 @@ fn solve(sum : u64, battery_bank: &str, num_batteries: usize) -> u64
     return sum + value;
 }
 
-fn solvep1(problem_filepath: &Path) -> u64
+fn run_solve(problem_filepath: &Path, group_size: usize) -> u64
 {
     let mut sum: u64 = 0;
     sum = do_line_by_line(  sum,
                             problem_filepath,
-                            |v, line| solve(v, line, 2))
+                            |v, line| solve(v, line, group_size))
             .expect("Failed to process lines");
     return sum;
 }
 
+fn solvep1(problem_filepath: &Path) -> u64
+{
+    return run_solve(problem_filepath, 2);
+}
+
 fn solvep2(problem_filepath: &Path) -> u64
 {
-    let mut sum: u64 = 0;
-    sum = do_line_by_line(  sum,
-                            problem_filepath,
-                            |v, line| solve(v, line, 12))
-            .expect("Failed to process lines");
-    return sum;
+    return run_solve(problem_filepath, 12);
 }
 
 pub fn solution(problem_data_fp: &Path) {
