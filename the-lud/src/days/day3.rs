@@ -33,14 +33,12 @@ fn solve(sum : u64, battery_bank: &str, num_batteries: usize) -> u64
             // In either case, we place this at the head and pop-off the remainder of the list.
             //  e.g. 3 => (3) ->
             //  e.g. 7 => (7) -/-> (6) -> (4) => (7) ->
-            // Don't do this if we're looking at the last value in the list.
             list.push_front(*byte); // Push the new head.
             list.split_off(1); // Pop off the rest of the list.
         }
         else
         {   // Iterate over the rest of the stored nodes to see if we need to replace them.
-            // To avoid double mutable borrow, collect indices to replace, then do mutation after
-            // iteration.
+            // Use replace_idx to avoid altering list while iterating over it.
             let mut replace_idx: Option<usize> = None;
             for (idx, item) in list.iter().skip(1).enumerate()
             {
@@ -52,13 +50,13 @@ fn solve(sum : u64, battery_bank: &str, num_batteries: usize) -> u64
                 }
             }
 
-            if let Some(idx) = replace_idx {
-                // Remove all elements from idx onward, then push_back the new byte
-                list.split_off(idx);
-                list.push_back(*byte);
+            if let Some(idx) = replace_idx
+            {
+                list.split_off(idx); // Clear the list tail after `idx`.
+                list.push_back(*byte); // Add new tail node.
             }
             else if (list.len() < num_batteries)
-            {   // No items were added and we have space for the item, add it to the end.
+            {   // No items were added and we have space for the current item, append it.
                 list.push_back(*byte);
             }
         }
