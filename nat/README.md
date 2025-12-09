@@ -20,3 +20,4 @@ so.
 | [Day 01](./day01/README.md) |    [bash](https://www.gnu.org/software/bash/)    |
 | [Day 02](./day02/README.md) |          [Perl](https://www.perl.org/)           |
 | [Day 03](./day03/README.md) | [pwsh](https://github.com/PowerShell/PowerShell) |
+| [Day 04](./day04/README.md) |           [lua](https://www.lua.org/)            |
