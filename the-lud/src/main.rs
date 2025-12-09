@@ -2,6 +2,7 @@
 mod days {
     pub mod day1;
     pub mod day2;
+    pub mod day3;
 }
 
 mod utilities;
@@ -20,6 +21,7 @@ fn main() {
     match args[1].as_str() {
         "1" => days::day1::solution(Path::new("./inputs/day1.txt")),
         "2" => days::day2::solution(Path::new("./inputs/day2.txt")),
+        "3" => days::day3::solution(Path::new("./inputs/day3.txt")),
         _ => eprintln!(
             "This day has not been completed, or does not exist: {}",
             args[1]
