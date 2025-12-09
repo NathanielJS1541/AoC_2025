@@ -13,7 +13,7 @@ ERR_INPUT=3 # Input file processing error.
 
 # Create a USAGE variable containing the usage message for this script.
 read -d '' -r USAGE <<- EOF
-Usage: day01.sh -i ./input.txt
+Usage: day01.sh -i ./input
 
 Read challenge input data from a text file and calculate the solutions.
 

@@ -25,7 +25,7 @@ path to the input data. The `-h` flag can be provided to view the usage
 information:
 
 ```
-Usage: day01.sh -i ./input.txt
+Usage: day01.sh -i ./input
 
 Read challenge input data from a text file and calculate the solutions.
 
