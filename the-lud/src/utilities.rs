@@ -69,3 +69,14 @@ impl Divisor
             }
         }
 }
+
+pub fn concat_digits(digits: &[u8]) -> Option<u64>
+{
+    let mut n: u64 = 0;
+    for &d in digits
+    {
+        if d > 9 { return None; }
+        n = n.checked_mul(10)?.checked_add(d as u64)?;
+    }
+    return Some(n)
+}
