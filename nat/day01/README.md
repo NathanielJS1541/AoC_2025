@@ -8,10 +8,11 @@ data to be passed in as a text file using command line arguments. See
 ## Usage
 
 This script requires:
- - `bash 4.3+` to be installed on the system. This script uses variables with
-   the `nameref` attribute, which were introduced in `bash 4.3`.
- - Your challenge input to be downloaded locally.
- - The script to be executable.
+
+- `bash 4.3+` to be installed on the system. This script uses variables with
+  the `nameref` attribute, which were introduced in `bash 4.3`.
+- Your challenge input to be downloaded locally.
+- The script to be executable.
 
 Simply run the following to make the script executable:
 

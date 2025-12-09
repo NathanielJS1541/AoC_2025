@@ -8,8 +8,9 @@ more details.
 ## Usage
 
 This script requires:
- - [`Perl`](https://www.perl.org/) to be installed on the system.
- - Your challenge input to be downloaded locally.
+
+- [`Perl`](https://www.perl.org/) to be installed on the system.
+- Your challenge input to be downloaded locally.
 
 This script has no external dependencies, as it only uses core modules.
 

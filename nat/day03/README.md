@@ -8,9 +8,10 @@ input data to be passed in as a text file using command line arguments. See
 ## Usage
 
 This script requires:
- - [`pwsh`](https://github.com/PowerShell/PowerShell) to be installed on the
-   system.
- - Your challenge input to be downloaded locally.
+
+- [`pwsh`](https://github.com/PowerShell/PowerShell) to be installed on the
+  system.
+- Your challenge input to be downloaded locally.
 
 The script can accept the input data as an argument, providing the path to the
 file:
