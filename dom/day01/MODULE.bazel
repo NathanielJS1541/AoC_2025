@@ -1,0 +1,7 @@
+module(name = "day1")
+
+read_turns = use_extension("@day1//rules:fuck.bzl", "read_turns")
+read_turns.file(
+  path = "//data:in.bzl",
+)
+use_repo(read_turns, "my_repo")

@@ -1,0 +1,11 @@
+load("//rules:in_to_bazel.bzl", "in_bazel")
+
+in_bazel(
+  name = "in.bzl",
+  src = "//data:input",
+)
+
+filegroup(
+  name = "read",
+  srcs = ["@day1//my_repo:a"],
+)

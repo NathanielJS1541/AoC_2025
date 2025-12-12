@@ -1,0 +1,32 @@
+=LET(
+    input, A1:A140,
+    nrows, ROWS(input),
+    ncols, LEN(INDEX(input, 1)),
+    PAD_ROW, LAMBDA(row, CONCAT(".", row, ".")),
+    padded, VSTACK(
+        REPT(".", ncols + 2),
+        BYROW(input, PAD_ROW),
+        REPT(".", ncols + 2)
+    ),
+    split, MID(padded, SEQUENCE(1, ncols + 2),1),
+    INSPECT_CELL, LAMBDA(acc,row,col,
+        LET(
+            IS_ROLL, LAMBDA(coord,
+                INDEX(split, INDEX(coord, 1, 1), INDEX(coord, 1, 2)) = "@"
+            ),
+            thisIsRoll, IS_ROLL(HSTACK(row, col)),
+            neighborsCoords, HSTACK(row, col) + {-1,-1;-1,0;-1,1;0,-1;0,1;1,-1;1,0;1,1},
+            numNeighborRolls, SUM(IF(BYROW(neighborsCoords, IS_ROLL), 1, 0)),
+            acc + IF(AND(thisIsRoll, numNeighborRolls < 4), 1, 0)
+        )
+    ),
+    INSPECT_ROW, LAMBDA(acc,row,
+        LET(
+            INSPECT_ROW_CELL, LAMBDA(accc, col,
+                INSPECT_CELL(accc, row, col)
+            ),
+            acc + REDUCE(0, SEQUENCE(ncols, 1, 2), INSPECT_ROW_CELL)
+        )
+    ),
+    REDUCE(0, SEQUENCE(nrows, 1, 2), INSPECT_ROW)
+)

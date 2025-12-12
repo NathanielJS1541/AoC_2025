@@ -1,0 +1,43 @@
+=LET(
+    input, A1:A5,
+    operandCount, ROWS(input) - 1,
+    operators, TEXTSPLIT(INDEX(input, operandCount+1), " ", , TRUE),
+    problemCount, COLUMNS(operators),
+    operandRows, DROP(input, -1),
+    rowLenChars, LEN(INDEX(input, 1)),
+    spaceMask, MID(operandRows, SEQUENCE(1, rowLenChars), 1) = " ",
+    spaceColsMask, BYCOL(spaceMask, AND),
+
+    REPLACE_BY_MASK, LAMBDA(str,
+        LET(
+            asciiIn, CODE(MID(str, SEQUENCE(1, rowLenChars), 1)),
+            replacedAscii, asciiIn + spaceColsMask * (CODE("#") - CODE(" ")),
+            CONCAT(CHAR(replacedAscii))
+        )
+    ),
+
+    delimitedString, TEXTJOIN("|", FALSE, BYROW(operandRows, REPLACE_BY_MASK)),
+    operands, TEXTSPLIT(delimitedString, "#", "|"),
+
+    COMPUTE_COL, LAMBDA(colIndex,
+        LET(
+            operator, INDEX(operators, 1, colIndex),
+            eqnOperands, CHOOSECOLS(operands, colIndex),
+            transposedOperands, NUMBERVALUE(BYROW(
+                TRANSPOSE(MID(
+                    eqnOperands,
+                    SEQUENCE(1, MAX(LEN(eqnOperands))),
+                    1
+                )),
+                CONCAT
+            )),
+
+            IF(operator = "+",
+                SUM(transposedOperands),
+                PRODUCT(transposedOperands)
+            )
+        )
+    ),
+
+    SUM(MAP(SEQUENCE(1, problemCount), COMPUTE_COL))
+)

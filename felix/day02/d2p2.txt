@@ -1,0 +1,46 @@
+=LET(
+    SUM_INVALID_IDS_IN_RANGE, LAMBDA(leftRight, LET(
+        FACTORS, LAMBDA(x, LET(
+            All, SEQUENCE(1, FLOOR.MATH(x / 2)),
+            FILTER(All, MOD(INDEX(x, 1), All) = 0)
+        )),
+        RANGE_FACTOR_INVALID_IDS, LAMBDA(min,max,chunkLength,
+            LET(
+            multiChunkers, NUMBERVALUE(REPT(SEQUENCE(
+                       1,
+                        LEFT(max, chunkLength) - LEFT(min, chunkLength) + 1,
+                        LEFT(min, chunkLength)
+                    ),
+                    LEN(min) / chunkLength
+            )),
+            IFERROR(FILTER(multiChunkers, (multiChunkers >= min) * (multiChunkers <= max) * (LEN(multiChunkers) > 1)), 0)
+            )
+        ),
+        RANGE_INVALID_IDS, LAMBDA(min,max,
+            IF(LEN(min) = 1,
+                0,
+                DROP(REDUCE(0, FACTORS(LEN(min)),
+                         LAMBDA(acc,f, HSTACK(acc, RANGE_FACTOR_INVALID_IDS(min, max, f)))
+                ), , 1)
+            )
+        ),
+        GET_INVALID_IDS, LAMBDA(min,max,
+            IF(LEN(min) = LEN(max),
+                RANGE_INVALID_IDS(min, max),
+                HSTACK(
+                    RANGE_INVALID_IDS(min, NUMBERVALUE(REPT("9", LEN(min)))),
+                    RANGE_INVALID_IDS(NUMBERVALUE(CONCAT("1", REPT("0", LEN(max) - 1))), max)
+                )
+            )
+        ),
+        left, INDEX(leftRight, 1),
+        right, INDEX(leftRight, 2),
+        invalidIDs, TRANSPOSE(UNIQUE(TRANSPOSE(GET_INVALID_IDS(left, right)))),
+        SUM(invalidIDs)
+    )),
+    r, BYROW(
+        NUMBERVALUE(TEXTSPLIT(A1, "-", ",")),
+        LAMBDA(row, SUM_INVALID_IDS_IN_RANGE(row))
+    ),
+    SUM(r)
+)

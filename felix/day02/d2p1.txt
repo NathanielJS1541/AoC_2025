@@ -1,0 +1,40 @@
+=LET(
+    splitInput, TEXTSPLIT(A1, , ","),
+    doRange, LAMBDA(rangeStr, LET(
+        splitVals, NUMBERVALUE(TEXTSPLIT(rangeStr, "-")),
+        leftVal, INDEX(splitVals, 1, 1),
+        rightVal, INDEX(splitVals, 1, 2),
+        startEndLefts, IF(
+            AND(ISODD(LEN(splitVals))),
+            "",
+            LET(
+                startRight, LEFT(rightVal, CEILING.MATH(LEN(rightVal) / 2)),
+                HSTACK(
+                    LET(
+                        startLeft, LEFT(leftVal,  LEN(leftVal) / 2),
+                        IF(startLeft = "", startRight, startLeft)
+                    ),
+                startRight
+                )
+            )
+        ),
+        startLeft, INDEX(startEndLefts, 1, 1),
+        endLeft, INDEX(startEndLefts, 1, 2),
+        candidates, LET(
+            firstHalves, TEXT(SEQUENCE(1, endLeft - startLeft + 1, startLeft), "0"),
+            NUMBERVALUE(IFERROR(
+                firstHalves & firstHalves,
+                0
+            ))
+        ),
+        SUM(IF(candidates >= leftVal, IF(candidates <= rightVal, TRUE, FALSE), FALSE) * candidates)
+    )),
+    F, LAMBDA(G,L,
+    doRange(CONCAT(INDEX(L, 1)))
+    + IF(
+        ROWS(L) > 1,
+        G(G, DROP(L, 1)),
+        0)
+    ),
+    F(F, splitInput)
+)
