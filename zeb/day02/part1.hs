@@ -5,9 +5,9 @@ splitC f "" = []
 splitC f s = w : splitC f ss'
   where
     (w, ss) = break f s
-    ss' = if ss == "" then [] else tail ss
+    ss' = if ss == "" then [] else drop 1 ss
 
-idRangesIo = splitC (==',') . init <$> readFile "input.txt"
+idRangesIo = splitC (==',') . init <$> readFile "input0.txt"
 
 pairRange [x, y] = [read x..read y]
 
