@@ -87,6 +87,8 @@ Here you can get links to the `README`s within everyone's directory.
 - [Felix](./felix/README.md)
 - [Kitty](./kitty/README.md)
 - [Nat](./nat/README.md)
+- [Chris](./chris/README.md)
+- [Zeb](./zeb/README.md)
 - [Nika](./nika/README.md)
 - [Tom](./tom/)
 - [Other Tom](./the-lud/)
