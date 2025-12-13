@@ -9,11 +9,14 @@ int main()
 {
     UINT100 initialPosition{50};
 
-    std::string pathway{ "C:\\Users\\Jack\\Desktop\\Programming\\AdventOfCode\\AOCDay1SafeCracker\\input.txt" };
+    std::string pathway{ "input.txt" };
     std::vector<std::vector<unsigned int>> instructionList{readInstructions(pathway)};
-    unsigned int passwordCount{ crackPassword(instructionList,initialPosition) };
 
-    std::cout << passwordCount << std::endl;
+    unsigned int passwordCount1{ crackPassword(instructionList,initialPosition) };
+    unsigned int passwordCount2{ crackPasswordPart2(instructionList, initialPosition) };
+    
+    std::cout << passwordCount1 << std::endl;
+    std::cout << passwordCount2 << std::endl;
 
     return 0;
 }

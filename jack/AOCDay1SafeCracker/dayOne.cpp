@@ -38,6 +38,51 @@ unsigned int crackPassword(std::vector<std::vector<unsigned int>> instructionLis
 
         if (curPosition == 0) passwordCount++;
     }
+    std::cout << curPosition << std::endl;
+    return passwordCount;
+}
+
+unsigned int crackPasswordPart2(std::vector<std::vector<unsigned int>> instructionList, UINT100 oldPosition) {
+    
+    unsigned int passwordCount{ 0 };
+    UINT100 newPosition{oldPosition};
+
+    for (auto rotation : instructionList) {
+        if (rotation[0] == 0u) {
+            newPosition += rotation[1] % 100;
+        }
+        else {
+            newPosition -= rotation[1] % 100;
+        }
+
+        passwordCount += checkClickCondition(oldPosition, rotation[1], rotation[0]);
+
+        oldPosition = newPosition;
+        
+    }
+    std::cout << oldPosition << std::endl;
 
     return passwordCount;
+}
+
+unsigned int checkClickCondition(UINT100 oldPosition,unsigned int fullClicks, unsigned int direction) {
+
+    UINT100 partialClicks{fullClicks % 100};
+
+    unsigned int overflowCounter{ fullClicks / 100 };
+    
+
+    if (direction == 0) {
+        if (99u - oldPosition < partialClicks ) {
+            overflowCounter++;
+        }
+    }
+    else {
+        if (oldPosition <= partialClicks) {
+            overflowCounter++;
+        }
+    }
+
+
+    return overflowCounter;
 }
