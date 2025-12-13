@@ -46,7 +46,8 @@ public:
     friend bool operator!=(const UINT100& a, const UINT100& b) noexcept;
     friend bool operator<(const UINT100& a, const UINT100& b) noexcept;
     friend bool operator<=(const UINT100& a, const UINT100& b) noexcept;
-
+    friend bool operator>(const UINT100& a, const UINT100& b) noexcept;
+    friend bool operator>=(const UINT100& a, const UINT100& b) noexcept;
     // stream output
     friend std::ostream& operator<<(std::ostream& os, const UINT100& x);
 };

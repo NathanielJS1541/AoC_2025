@@ -57,7 +57,8 @@ bool operator==(const UINT100& a, const UINT100& b) noexcept { return a.value ==
 bool operator!=(const UINT100& a, const UINT100& b) noexcept { return !(a == b); }
 bool operator<(const UINT100& a, const UINT100& b) noexcept { return a.value < b.value; }
 bool operator<=(const UINT100& a, const UINT100& b) noexcept { return a.value <= b.value; }
-
+bool operator>(const UINT100& a, const UINT100& b) noexcept { return a.value > b.value; }
+bool operator>=(const UINT100& a, const UINT100& b) noexcept { return a.value >= b.value; }
 // stream output
 std::ostream& operator<<(std::ostream& os, const UINT100& x) {
     return os << static_cast<unsigned int>(x.value);
