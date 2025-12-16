@@ -10,9 +10,9 @@ int main()
     std::string pathway{ "input.txt" };
 
     std::vector<std::vector<long long>> ranges{readAndParseInputFile(pathway)};
-    long long invalidEntries{checkForRepeats(ranges)};
+    //long long invalidEntries{checkForRepeats(ranges)};
     long long invalidEntriesPart2{ checkForRepeatsPart2(ranges) };
-    std::cout << invalidEntries << " " << invalidEntriesPart2 << std::endl;
+    std::cout << " " << invalidEntriesPart2 << std::endl;
 
     return 0;
 }
