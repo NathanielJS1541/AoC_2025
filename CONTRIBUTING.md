@@ -37,7 +37,7 @@ to learn how to use both `git` and GitHub.
 I'd also recommend [GitHub Desktop](https://desktop.github.com/download/) or
 [GitKraken](https://www.gitkraken.com/) as more beginner-friendly `git` clients.
 
-You can also create your own repo's to practice using git.
+You can also create your own repos on GitHub to practice using git.
 
 ## Repository Rules
 
