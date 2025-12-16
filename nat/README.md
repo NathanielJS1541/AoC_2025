@@ -22,3 +22,4 @@ so.
 | [Day 03](./day03/README.md) | [pwsh](https://github.com/PowerShell/PowerShell) |
 | [Day 04](./day04/README.md) |           [lua](https://www.lua.org/)            |
 | [Day 05](./day05/README.md) |        [Nushell](https://www.nushell.sh/)        |
+| [Day 06](./day06/README.md) |    [wren](https://github.com/wren-lang/wren)     |
