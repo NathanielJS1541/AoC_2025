@@ -1,0 +1,19 @@
+=LET(
+    input, O11:O17,
+    sorted, SORT(input),
+    CLOSEST_PAIR, LAMBDA(ME, start, end,
+        IF(end = start,
+            1000000000,
+            IF(end = start + 1,
+                INDEX(sorted, end) - INDEX(sorted, start),
+                LET(
+                    splitIndex, FLOOR.MATH((start + end) / 2),
+                    crossCutDist, INDEX(sorted, splitIndex + 1) - INDEX(sorted, splitIndex),
+                    e, MIN(ME(ME, start, splitIndex), ME(ME, splitIndex + 1, end), crossCutDist),
+                    e
+                )
+            )
+        )
+    ),
+    CLOSEST_PAIR(CLOSEST_PAIR, 1, ROWS(input))
+)
