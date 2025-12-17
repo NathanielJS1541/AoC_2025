@@ -37,7 +37,7 @@ unsigned int crackPassword(std::vector<std::vector<unsigned int>> instructionLis
         }
 
         if (curPosition == 0) passwordCount++;
-        std::cout << curPosition << std::endl;
+
     }
     return passwordCount;
 }
@@ -54,9 +54,6 @@ unsigned int crackPasswordPart2(std::vector<std::vector<unsigned int>> instructi
 
         oldPosition = newPosition;
 
-        std::cout << "current overflow count : " << passwordCount << " | new position : ";
-        std::cout << oldPosition << std::endl;
-        std::cout << std::endl;
     }
     
 
@@ -68,7 +65,6 @@ unsigned int checkClickCondition(UINT100 oldPosition,unsigned int fullClicks, un
     UINT100 partialClicks{fullClicks % 100};
 
     unsigned int overflowCounter{ fullClicks / 100 };
-    std::cout << "current position: " << oldPosition << " | full rotations: " << overflowCounter << " | partial clicks: " << partialClicks << " | direction: ";
     
     if (partialClicks > 0 && oldPosition != 0) {
         if (direction == 0) {
@@ -76,14 +72,11 @@ unsigned int checkClickCondition(UINT100 oldPosition,unsigned int fullClicks, un
             if (99u - oldPosition < partialClicks) {
                 overflowCounter++;
             }
-            std::cout << " right | ";
-
         }
         else {
             if (oldPosition <= partialClicks) {
                 overflowCounter++;
             }
-            std::cout << " left | ";
         }
     }
 
